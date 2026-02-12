@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="fr">
   <head>
@@ -2049,8 +2050,7 @@
             </select>
           </div>
 
-          <textarea name="message" placeholder="Message..."></textarea>
-
+         
           <label class="terms">
             <input type="checkbox" id="agree" />
             أوافق على شروط الحجز وأعلم أن التأكيد يتم عبر الهاتف
@@ -2157,7 +2157,7 @@
       </div>
     </footer>
 
-    <script>
+   <script>
       document.querySelectorAll(".menu-drop").forEach((card) => {
         card.addEventListener("click", () => {
           card.classList.toggle("open");
@@ -2222,75 +2222,7 @@
       });
     </script>
 
-    <script>
-      function isValidMoroccanPhone(phone) {
-        return /^(06|07)\d{8}$/.test(phone);
-      }
-
-      function sendWhatsApp() {
-        const nom = document.querySelector('[name="nom"]').value.trim();
-        const tel = document.querySelector('[name="telephone"]').value.trim();
-        const email = document.querySelector('[name="email"]').value.trim();
-        const date = document.getElementById("date").value;
-        const heure = document.getElementById("heure").value;
-        const personnes = document.querySelector('[name="personnes"]').value;
-        const type = document.getElementById("typeReservation").value;
-        const message = document.querySelector("textarea").value.trim();
-        const agree = document.getElementById("agree").checked;
-
-        if (!nom || !tel || !date || !heure || !personnes || !type) {
-          alert("❗ عمر جميع الخانات الضرورية");
-          return;
-        }
-
-        if (!agree) {
-          alert("❗ خاصك توافق على شروط الحجز");
-          return;
-        }
-
-        if (!isValidMoroccanPhone(tel)) {
-          alert("❌ رقم الهاتف غير صحيح (مثال: 0612345678)");
-          return;
-        }
-
-        if (email && !email.includes("@")) {
-          alert("❌ البريد الإلكتروني غير صالح");
-          return;
-        }
-
-        const optionsSelect = document.getElementById("options");
-        const options = optionsSelect
-          ? Array.from(optionsSelect.selectedOptions)
-              .map((o) => o.value)
-              .join(", ")
-          : "Aucune";
-
-        const reservationCode =
-          "LRJ-" + Math.floor(1000 + Math.random() * 9000);
-
-        const text = encodeURIComponent(
-          `🍽️ Nouvelle Réservation – La Ruche de Jardin
-
-🆔 Code: ${reservationCode}
-👤 Nom: ${nom}
-📞 Téléphone: ${tel}
-📧 Email: ${email || "-"}
-
-📅 Date: ${date}
-⏰ Heure: ${heure}
-👥 Personnes: ${personnes}
-🎯 Type: ${type}
-📝 Message:
-${message || "-"}
-
-⚠️ الحجز غير مؤكد حتى يتم الاتصال بكم`,
-        );
-
-        const whatsappNumber = "212705738779";
-        window.open(`https://wa.me/${whatsappNumber}?text=${text}`, "_blank");
-      }
-    </script>
-
+  
     <script>
       function isValidMoroccanPhone(phone) {
         const regex = /^(06|07)\d{8}$/;
@@ -2385,5 +2317,110 @@ ${message || "-"}
       });
     </script>
     <button id="backHome" onclick="goHome()">↑</button>
+    <script>
+function sendWhatsApp() {
+
+  const nom = document.querySelector('[name="nom"]').value.trim();
+  const tel = document.querySelector('[name="telephone"]').value.trim();
+  const email = document.querySelector('[name="email"]').value.trim();
+  const date = document.getElementById("date").value;
+  const heure = document.getElementById("heure").value;
+  const personnes = document.querySelector('[name="personnes"]').value;
+  const type = document.getElementById("typeReservation").value;
+  const agree = document.getElementById("agree").checked;
+
+  // ===== validations =====
+  if (!nom || !tel || !date || !heure || !personnes || !type) {
+    alert("❗ عفاك عمر جميع الخانات");
+    return;
+  }
+
+  if (!agree) {
+    alert("❗ خاصك توافق على شروط الحجز");
+    return;
+  }
+
+  // ===== options anniversaire =====
+  let optionsText = "";
+  if (type === "anniversaire") {
+    const options = Array.from(
+      document.getElementById("options").selectedOptions
+    ).map(opt => opt.value);
+
+    if (options.length > 0) {
+      optionsText = "\n🎁 Options: " + options.join(", ");
+    }
+  }
+
+  // ===== message =====
+  const text = `
+🍽️ Nouvelle réservation
+👤 Nom: ${nom}
+📞 Tel: ${tel}
+📧 Email: ${email || "—"}
+📅 Date: ${date}
+⏰ Heure: ${heure}
+👥 Personnes: ${personnes}
+🎯 Type: ${type}${optionsText}
+⚠️ الحجز غير مؤكد حتى يتم الاتصال بكم
+`;
+
+  const phone = "212778950090";
+  const url = "https://wa.me/" + phone + "?text=" + encodeURIComponent(text);
+
+  // فتح واتساب
+  window.location.href = url;
+}
+</script>
+<script>
+const dateInput = document.getElementById("date");
+const today = new Date();
+today.setDate(today.getDate() + 1);
+dateInput.min = today.toISOString().split("T")[0];
+</script>
+
+<script>
+window.addEventListener("DOMContentLoaded", () => {
+  const dateInput = document.getElementById("date");
+  const heureInput = document.getElementById("heure");
+
+  // ===== Tarikh: min = today =====
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, "0");
+  const dd = String(today.getDate()).padStart(2, "0");
+  const todayStr = `${yyyy}-${mm}-${dd}`;
+
+  dateInput.min = todayStr; // ma ydkhlch 9dim
+
+  // ===== Optional: alert direct ila 9dim =====
+  dateInput.addEventListener("input", () => {
+    if (dateInput.value < todayStr) {
+      alert("❌ ما يمكنش تدخل تاريخ قديم");
+      dateInput.value = todayStr; // t3awd l’input l’aujourd’hui
+    }
+  });
+
+  // ===== Sa3a: min 18:00 max 23:59 =====
+  heureInput.addEventListener("change", () => {
+    const value = heureInput.value;
+    if (!value) return;
+
+    const [h, m] = value.split(":").map(Number);
+    const totalMinutes = h * 60 + m;
+
+    if (totalMinutes < 18 * 60 || totalMinutes > 23 * 60 + 59) {
+      alert("⛔ الحجز متاح فقط من 18:00 حتى 23:59");
+      heureInput.value = "";
+    }
+  });
+});
+</script>
+
+
   </body>
 </html>
+
+
+
+
